@@ -23,7 +23,7 @@ class GPT:
         return embeddings.data[0].embedding
 
     @cache
-    def generate_image(self, prompt, size="256x256", quality="standard", n=1):
+    def generate_image(self, prompt, size="1024x1024", quality="standard", n=1):
         return self.client.images.generate(
             model=self.image_model, prompt=prompt, size=size, quality=quality, n=n
         )
@@ -31,7 +31,7 @@ class GPT:
     def get_image_url(self, image):
         return str(image.data[0].url)
 
-    def detect_differences(self, initial_prompt, url, max_tokens=150):
+    def detect_differences(self, initial_prompt, url, max_tokens=150, temperature=0.2):
         system_message = (
             "Compare the given AI generated image with a matching prompt. "
             "State all differences of a prompt to the image in bulletpoints. "
@@ -56,16 +56,16 @@ class GPT:
                 },
             ],
             max_tokens=max_tokens,
-            # temperature=0.2,
+            temperature=temperature,
             # top_p=0.3
         )
         return generation.choices[0].message.content
 
-    def generate_prompt_from_differences(self, previous_messages):
+    def generate_prompt_from_differences(self, previous_messages, temperature):
         system_message = "You are a prompt generator for images. You will get a list of differences for the generated image. Create a new prompt for a new image that eliminates the differences and satisfies the initial prompt."
         messages = [{"role": "system", "content": system_message}]
         messages += previous_messages
         generation = self.client.chat.completions.create(
-            model=self.prompt_model, messages=messages
+            model=self.prompt_model, messages=messages, temperature=temperature
         )
         return generation.choices[0].message.content

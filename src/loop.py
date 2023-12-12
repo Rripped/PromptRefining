@@ -11,11 +11,12 @@ from storage import Storage
 
 class Loop:
     def __init__(
-        self, max_iteration_count, initial_prompt, gpt: GPT, output_dir
+        self, max_iteration_count, initial_prompt, temperature, gpt: GPT, output_dir
     ) -> None:
         self.max_iteration_count = max_iteration_count
         self.initial_prompt = initial_prompt
         self.gpt = gpt
+        self.temperature = temperature
         self.embeddings = []
         self.storage = Storage(
             output_dir,
@@ -43,7 +44,7 @@ class Loop:
             url = self.gpt.get_image_url(image)
             print(f"Iteration {i + 1}:")
             differences = self.gpt.detect_differences(
-                self.initial_prompt, url
+                self.initial_prompt, url, max_tokens=150, temperature=self.temperature
             )  # differences
 
             print(f"Differences: {differences}")
@@ -52,7 +53,7 @@ class Loop:
                 break
 
             messages += [{"role": "user", "content": differences}]
-            new_prompt = self.gpt.generate_prompt_from_differences(messages)  # prompt
+            new_prompt = self.gpt.generate_prompt_from_differences(messages, self.temperature)  # prompt
             embedding = self.gpt.get_embeddings(new_prompt)  # embedding
             self.embeddings += embedding
             messages += [{"role": "assistant", "content": new_prompt}]

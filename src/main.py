@@ -18,8 +18,8 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
 
-    gpt = GPT(os.environ["OAI"])
+    gpt = GPT(os.environ["OAI"], image_model="dall-e-3")
     loop = Loop(
-        args.max_iteration_count, args.initial_prompt, gpt, output_dir=args.output_dir
+        args.max_iteration_count, args.initial_prompt, temperature=0.5, gpt=gpt, output_dir=args.output_dir
     )
     loop.run()
