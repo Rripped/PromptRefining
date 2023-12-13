@@ -19,7 +19,7 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
 
-    sysmsgs = json.load(open("./src/sysmsg.json"))
+    system_messages = json.load(open("./src/system_messages.json"))
 
     gpt = GPT(os.environ["OAI"], image_model="dall-e-3")
     loop = Loop(
@@ -28,7 +28,7 @@ if __name__ == "__main__":
         temperature=0.5,
         gpt=gpt,
         output_dir=args.output_dir,
-        img_sysmsg=sysmsgs["diff_detection"][0],
-        prompt_sysmsg=sysmsgs["prompt_gen"][0],
+        image_system_message=system_messages["image_system_message"][0],
+        prompt_system_message=system_messages["prompt_system_message"][0],
     )
     loop.run()

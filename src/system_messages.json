@@ -1,9 +1,9 @@
 {
-    "diff_detection": [
+    "image_system_message": [
         "Compare the given AI generated image with a matching prompt. State all differences of a prompt to the image in bulletpoints. Ignore artifacts not specified in the prompt. Return DONE if there are no major differences.",
         "Your goal is to find all differences between the generated image and the prompt. State all differences of a prompt to the image in bulletpoints. Ignore artifacts not specified in the prompt. Return DONE if there are no major differences."
     ],
-    "prompt_gen": [
+    "prompt_system_message": [
         "You are a prompt generator for images. You will get a list of differences for the generated image. Create a new prompt for a new image that eliminates the differences and satisfies the initial prompt.",
         "Please generate a new prompt for the given differences. Your prompt should eliminate the differences and satisfy the initial prompt."
     ]

@@ -17,8 +17,8 @@ class Loop:
         temperature,
         gpt: GPT,
         output_dir,
-        img_sysmsg,
-        prompt_sysmsg,
+        image_system_message,
+        prompt_system_message,
     ) -> None:
         self.max_iteration_count = max_iteration_count
         self.initial_prompt = initial_prompt
@@ -33,8 +33,8 @@ class Loop:
             gpt.image_model,
             gpt.prompt_model,
         )
-        self.img_sysmsg = img_sysmsg
-        self.prompt_sysmsg = prompt_sysmsg
+        self.img_sysmsg = image_system_message
+        self.prompt_sysmsg = prompt_system_message
 
     def run(self):
         messages = [
