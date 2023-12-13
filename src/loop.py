@@ -1,13 +1,5 @@
 from oai_api import GPT
-import requests
-import shutil
-import urllib.request
-import os
-import sys
-import json
-
 from storage import Storage
-
 
 class Loop:
     def __init__(
@@ -17,14 +9,15 @@ class Loop:
         temperature,
         gpt: GPT,
         output_dir,
-        img_sysmsg,
-        prompt_sysmsg,
+        image_system_message,
+        prompt_system_message,
     ) -> None:
         self.max_iteration_count = max_iteration_count
         self.initial_prompt = initial_prompt
         self.gpt = gpt
         self.temperature = temperature
-        self.embeddings = []
+        self.prompt_embeddings = []
+        self.difference_embeddings = []
         self.storage = Storage(
             output_dir,
             max_iteration_count,
@@ -32,9 +25,11 @@ class Loop:
             gpt.multimodal_model,
             gpt.image_model,
             gpt.prompt_model,
+            image_system_message,
+            prompt_system_message
         )
-        self.img_sysmsg = img_sysmsg
-        self.prompt_sysmsg = prompt_sysmsg
+        self.img_sysmsg = image_system_message
+        self.prompt_sysmsg = prompt_system_message
 
     def run(self):
         messages = [
@@ -42,14 +37,9 @@ class Loop:
             {"role": "assistant", "content": self.initial_prompt},
         ]
         image = self.gpt.generate_image(self.initial_prompt)
-
-        initial_embedding = self.gpt.get_embeddings(self.initial_prompt)  # embedding
-        self.embeddings += initial_embedding
-
-        # init history storage with initial image
-        self.storage.init_data(self.gpt.get_image_url(image), initial_embedding)
-
-        # load json of sysmsg
+        prompt_embeddings = self.gpt.get_embeddings(self.initial_prompt)
+        self.prompt_embeddings.append(prompt_embeddings)
+        self.storage.init_data(self.gpt.get_image_url(image))
 
         for i in range(self.max_iteration_count):
             url = self.gpt.get_image_url(image)
@@ -60,25 +50,25 @@ class Loop:
                 system_message=self.img_sysmsg,
                 max_tokens=150,
                 temperature=self.temperature,
-            )  # differences
-
+            )
+            difference_embeddings = self.gpt.get_embeddings(differences)
+            self.difference_embeddings.append(difference_embeddings)
             print(f"Differences: {differences}")
-
+            messages += [{"role": "user", "content": differences}]
             if "DONE" in differences:
                 break
-
-            messages += [{"role": "user", "content": differences}]
             new_prompt = self.gpt.generate_prompt_from_differences(
                 messages, self.temperature, system_message=self.prompt_sysmsg
-            )  # prompt
-            embedding = self.gpt.get_embeddings(new_prompt)  # embedding
-            self.embeddings += embedding
+            )
+            prompt_embeddings = self.gpt.get_embeddings(new_prompt)
+            self.prompt_embeddings.append(prompt_embeddings)
             messages += [{"role": "assistant", "content": new_prompt}]
             print(f"New prompt: {new_prompt}")
-            image = self.gpt.generate_image(new_prompt)  # image
-
+            if "DONE" in new_prompt:
+                break
+            image = self.gpt.generate_image(new_prompt)
             self.storage.store_next_iteration(
-                self.gpt.get_image_url(image), differences, new_prompt, embedding
+                self.gpt.get_image_url(image), differences, new_prompt, self.prompt_embeddings, self.difference_embeddings, messages
             )
 
         return i

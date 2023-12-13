@@ -1,4 +1,4 @@
-from openai import OpenAI
+from openai import OpenAI, BadRequestError
 from sklearn.metrics.pairwise import cosine_similarity
 from functools import cache
 
@@ -24,9 +24,14 @@ class GPT:
 
     @cache
     def generate_image(self, prompt, size="1024x1024", quality="standard", n=1):
-        return self.client.images.generate(
-            model=self.image_model, prompt=prompt, size=size, quality=quality, n=n
-        )
+        for _ in range(0, 3):
+            try:
+                return self.client.images.generate(
+                    model=self.image_model, prompt=prompt, size=size, quality=quality, n=n
+                )
+            except BadRequestError as error:
+                print("Request failed. Retry. Error: ", error)
+        raise Exception("Failed to generate image!")
 
     def get_image_url(self, image):
         return str(image.data[0].url)
