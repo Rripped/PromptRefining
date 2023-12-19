@@ -1,16 +1,25 @@
 import torch
-from diffusers import StableDiffusionPipeline, EulerDiscreteScheduler
+import gc
+from diffusers import DiffusionPipeline
+from xformers.ops import MemoryEfficientAttentionFlashAttentionOp
 
-model_id = "stabilityai/stable-diffusion-2"
+# Clear CUDA cache
+torch.cuda.empty_cache()
 
-# Use the Euler scheduler here instead
-scheduler = EulerDiscreteScheduler.from_pretrained(model_id, subfolder="scheduler")
-pipe = StableDiffusionPipeline.from_pretrained(
-    model_id, scheduler=scheduler, torch_dtype=torch.float16
+
+pipe = DiffusionPipeline.from_pretrained(
+    "stabilityai/stable-diffusion-2-1", torch_dtype=torch.float16
 )
 pipe = pipe.to("cuda")
+# pipe.enable_xformers_memory_efficient_attention(
+#     attention_op=MemoryEfficientAttentionFlashAttentionOp
+# )
+# # Workaround for not accepting attention shape using VAE for Flash Attention
+# pipe.vae.enable_xformers_memory_efficient_attention(attention_op=None)
 
-prompt = "a photo of an astronaut riding a horse on mars"
-image = pipe(prompt).images[0]
+generated_image = pipe("An image of a squirrel in Picasso style").images[0]
+generated_image.save("generated_image.jpg")
 
-image.save("astronaut_rides_horse.png")
+del generated_image
+torch.cuda.empty_cache()
+gc.collect()
