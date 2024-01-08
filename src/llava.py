@@ -12,9 +12,10 @@ class Llava:
     ):
         self.sysmsg = sysmsg
         self.model_path = model_path
-        self.load_xbit = "--load-9bit" if load_8bit else "--load-4bit"
+        self.load_xbit = "--load-8bit" if load_8bit else "--load-4bit"
+        self.process = None
 
-    def prompt_llava(self, prompt, image_path, temperature=0.2):
+    def init_worker(self, prompt, image_path, temperature=0.2):
         command = [
             "python",
             "-m",
@@ -36,15 +37,23 @@ class Llava:
             text=True,
         )
 
-        while True:
+        i = 0
+        while i < 100:
             output = process.stdout.readline()
             if "USER:" in output:
-                break
+                self.process = process
+                return
             time.sleep(0.1)  # short delay to avoid overwhelming the CPU
+            i += 1
 
-        stdout, stderr = process.communicate(prompt)
+        # throw None if process is not ready after 30 seconds
+        print("Error: process not ready after 30 seconds, process is None")
+        return
 
-        if process.returncode != 0:
+    def prompt_llava(self, prompt):
+        stdout, stderr = self.process.communicate(prompt, timeout=10)
+
+        if self.process.returncode != 0:
             # tbd: handle errors if necessary
             print(f"Error: {stderr}")
             return None
@@ -62,4 +71,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # python src/llava.py -p "what do you see here?" -i ./data/mouse\ with_5_gpt-4-vision-preview_dall-e-2_gpt-4-1106-preview_v0/0_image.png -t 0.2
-    print(llava.prompt_llava(args.prompt, args.image, args.temperature))
+    llava.init_worker(args.prompt, args.image, args.temperature)
+    print(llava.prompt_llava(args.prompt))
