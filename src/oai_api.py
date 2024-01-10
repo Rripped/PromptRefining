@@ -27,7 +27,11 @@ class GPT:
         for _ in range(0, 3):
             try:
                 return self.client.images.generate(
-                    model=self.image_model, prompt=prompt, size=size, quality=quality, n=n
+                    model=self.image_model,
+                    prompt=prompt,
+                    size=size,
+                    quality=quality,
+                    n=n,
                 )
             except BadRequestError as error:
                 print("Request failed. Retry. Error: ", error)

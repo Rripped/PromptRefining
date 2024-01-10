@@ -3,6 +3,7 @@ import os
 import sys
 import json
 
+
 class Storage:
     def __init__(
         self,
@@ -13,7 +14,7 @@ class Storage:
         image_model,
         prompt_model,
         image_system_message,
-        prompt_system_message
+        prompt_system_message,
     ) -> None:
         self.max_iteration_count = max_iteration_count
         self.initial_prompt = initial_prompt
@@ -65,7 +66,7 @@ class Storage:
             "image_model": self.image_model,
             "prompt_model": self.prompt_model,
             "image_system_message": self.image_system_message,
-            "prompt_system_message": self.prompt_system_message
+            "prompt_system_message": self.prompt_system_message,
         }
 
         with open(f"{self.dir}/config.json", "w") as f:
@@ -82,7 +83,15 @@ class Storage:
             f.write(f"![{self.i}_image.png]({self.i}_image.png)\n\n")
         self._increase_iteration_count()
 
-    def store_next_iteration(self, image_url, differences, prompt, prompt_embeddings, difference_embeddings, messages):
+    def store_next_iteration(
+        self,
+        image_url,
+        differences,
+        prompt,
+        prompt_embeddings,
+        difference_embeddings,
+        messages,
+    ):
         self._write_iteration_count()
         self._write_differences(differences)
         self._write_prompt(prompt)
@@ -112,7 +121,7 @@ class Storage:
 
     def _write_prompt(self, prompt):
         with open(self.history, "a") as f:
-            f.write(f"### Prompt\n\n{prompt}")
+            f.write(f"### Prompt\n\n{prompt}\n")
 
     def _write_messages(self, messages):
         with open(os.path.join(self.dir, f"{self.i}_messages.json"), "w") as f:
