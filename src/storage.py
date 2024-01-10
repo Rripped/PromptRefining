@@ -113,7 +113,7 @@ class Storage:
         with open(os.path.join(self.dir, f"{self.i}_image.png"), "wb") as f:
             f.write(image)
         with open(self.history, "a") as f:
-            f.write(f"![{self.i}_image.png]({self.i}_image.png)\n")
+            f.write(f"### Image\n\n![{self.i}_image.png]({self.i}_image.png)\n\n")
 
     def _write_differences(self, differences):
         with open(self.history, "a") as f:
@@ -121,7 +121,7 @@ class Storage:
 
     def _write_prompt(self, prompt):
         with open(self.history, "a") as f:
-            f.write(f"### Prompt\n\n{prompt}\n")
+            f.write(f"### Prompt\n\n{prompt}\n\n")
 
     def _write_messages(self, messages):
         with open(os.path.join(self.dir, f"{self.i}_messages.json"), "w") as f:
