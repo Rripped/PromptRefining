@@ -1,6 +1,7 @@
 from oai_api import GPT
 from storage import Storage
 
+
 class Loop:
     def __init__(
         self,
@@ -26,7 +27,8 @@ class Loop:
             gpt.image_model,
             gpt.prompt_model,
             image_system_message,
-            prompt_system_message
+            prompt_system_message,
+            temperature,
         )
         self.img_sysmsg = image_system_message
         self.prompt_sysmsg = prompt_system_message
@@ -48,7 +50,7 @@ class Loop:
                 self.initial_prompt,
                 url,
                 system_message=self.img_sysmsg,
-                max_tokens=150,
+                max_tokens=200,
                 temperature=self.temperature,
             )
             difference_embeddings = self.gpt.get_embeddings(differences)
@@ -68,7 +70,12 @@ class Loop:
                 break
             image = self.gpt.generate_image(new_prompt)
             self.storage.store_next_iteration(
-                self.gpt.get_image_url(image), differences, new_prompt, self.prompt_embeddings, self.difference_embeddings, messages
+                self.gpt.get_image_url(image),
+                differences,
+                new_prompt,
+                self.prompt_embeddings,
+                self.difference_embeddings,
+                messages,
             )
 
         return i

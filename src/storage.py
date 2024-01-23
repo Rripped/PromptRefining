@@ -15,6 +15,7 @@ class Storage:
         prompt_model,
         image_system_message,
         prompt_system_message,
+        temperature,
     ) -> None:
         self.max_iteration_count = max_iteration_count
         self.initial_prompt = initial_prompt
@@ -23,6 +24,7 @@ class Storage:
         self.prompt_model = prompt_model
         self.image_system_message = image_system_message
         self.prompt_system_message = prompt_system_message
+        self.temperature = temperature
         self.init_dir(path)
         self.history = os.path.join(self.dir, f"history.md")
         self.i = 0
@@ -65,6 +67,7 @@ class Storage:
             "multimodal_model": self.multimodal_model,
             "image_model": self.image_model,
             "prompt_model": self.prompt_model,
+            "temperature": self.temperature,
             "image_system_message": self.image_system_message,
             "prompt_system_message": self.prompt_system_message,
         }
