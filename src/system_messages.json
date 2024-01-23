@@ -7,8 +7,8 @@
         "Describe the image in 3 bulletpoints. The description should be simple but concise."
     ],
     "prompt_system_message": [
-        "You are a prompt generator for images. You will get a list of differences for the generated image. Create a new prompt for a new image that eliminates the differences and satisfies the initial prompt.",
-        "Please generate a new prompt for the given differences. Your prompt should eliminate the differences and satisfy the initial prompt.",
+        "You are a prompt generator for images. You will get a list of differences for the generated image. Create a new prompt for a new image that avoids the differences and satisfies the initial prompt.",
+        "Please generate a new prompt preventing the given differences. Your prompt should satisfy the initial prompt, making sure non of the differences occurs again.",
         "Please generate a new prompt which eliminates the differences and satisfies the initial prompt. The prompt should be simple in formulation, similar to the initial prompt.",
         "Generate a prompt sentence, based on the given bulletpoints"
     ]
