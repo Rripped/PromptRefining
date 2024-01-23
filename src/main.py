@@ -28,7 +28,7 @@ if __name__ == "__main__":
         temperature=0.4,
         gpt=gpt,
         output_dir=args.output_dir,
-        image_system_message=system_messages["image_system_message"][5],
+        image_system_message=system_messages["image_system_message"][6],
         prompt_system_message=system_messages["prompt_system_message"][5],
     )
     loop.run()

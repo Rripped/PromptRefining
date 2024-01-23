@@ -50,7 +50,7 @@ class Loop:
                 self.initial_prompt,
                 url,
                 system_message=self.img_sysmsg,
-                max_tokens=200,
+                max_tokens=250,
                 temperature=self.temperature,
             )
             difference_embeddings = self.gpt.get_embeddings(differences)
