@@ -5,20 +5,14 @@
 !pip install flask-ngrok
 !pip install pyngrok
 
-import gc
-import os
-import signal
-import sys
 from threading import Thread
-import time
 import torch
 from llava.constants import (DEFAULT_IM_END_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IMAGE_TOKEN, IMAGE_TOKEN_INDEX)
 from llava.conversation import (SeparatorStyle, default_conversation)
 from llava.mm_utils import (KeywordsStoppingCriteria, load_image_from_base64, process_images, tokenizer_image_token)
 from llava.model.builder import load_pretrained_model
 from transformers import TextIteratorStreamer
-from flask import Flask, send_file, request
-from flask_ngrok import run_with_ngrok
+from flask import Flask, request
 from pyngrok import ngrok, conf
 
 conf.get_default().auth_token = 'auth-token'
